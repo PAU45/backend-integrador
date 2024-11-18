@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Preferencias</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>Selecciona tus categorías preferidas</h1>
+    <nav>
+        <a href="/inicio">Volver al Inicio</a>
+    </nav>
+</header>
+
+<section>
+    <form th:action="@{/preferencias}" method="post">
+        <h2>Selecciona tus categorías preferidas:</h2>
+        <div th:each="categoria : ${categorias}">
+            <label>
+                <input type="checkbox" name="categoryIds" th:value="${categoria.id}" />
+                <span th:text="${categoria.name}">Categoría</span>
+            </label>
+        </div>
+        <button type="submit">Guardar Preferencias</button>
+    </form>
+</section>
+
+<footer>
+    <p>&copy; 2024, TeCSup</p>
+</footer>
+</body>
+</html>
