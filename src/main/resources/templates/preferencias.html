@@ -18,7 +18,9 @@
         <h2>Selecciona tus categorías preferidas:</h2>
         <div th:each="categoria : ${categorias}">
             <label>
-                <input type="checkbox" name="categoryIds" th:value="${categoria.id}" />
+                <!-- Si la categoría está en la lista de categorías seleccionadas, el checkbox estará marcado -->
+                <input type="checkbox" name="categoryIds" th:value="${categoria.id}"
+                       th:checked="${categoriasSeleccionadas.contains(categoria)}" />
                 <span th:text="${categoria.name}">Categoría</span>
             </label>
         </div>

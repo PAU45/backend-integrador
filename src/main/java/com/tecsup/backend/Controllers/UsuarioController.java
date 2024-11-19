@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
 
 @Controller
@@ -29,7 +29,7 @@ public class UsuarioController {
     // Página de inicio después de iniciar sesión
     @GetMapping("/inicio")
     public String inicio(Model model) {
-        // Obtener el usuario autenticado desde tu sistema de sesión
+        // Obtener el usuario autenticado desde el SessionManager
         Usuario usuario = sessionManager.getCurrentUser();
 
         if (usuario == null) {
@@ -52,11 +52,10 @@ public class UsuarioController {
     }
 
     // Mapeo para mostrar el formulario de preferencias
-    // Mapeo para mostrar el formulario de preferencias
     @GetMapping("/preferencias")
-    public String mostrarFormularioPreferencias(HttpSession session, Model model) {
-        // Obtener el usuario desde la sesión
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+    public String mostrarFormularioPreferencias(Model model) {
+        // Obtener el usuario desde el SessionManager
+        Usuario usuario = sessionManager.getCurrentUser();
 
         if (usuario == null) {
             return "redirect:/login"; // Si no está autenticado, redirige al login
@@ -64,16 +63,20 @@ public class UsuarioController {
 
         // Obtener todas las categorías disponibles
         List<Categoria> categorias = categoriaService.findAll();
-        model.addAttribute("categorias", categorias); // Añadir las categorías al modelo
+        model.addAttribute("categorias", categorias); // Añadir las categorías disponibles al modelo
+
+        // Obtener las categorías seleccionadas previamente por el usuario
+        List<Categoria> categoriasSeleccionadas = preferenciaService.obtenerPreferenciasDeUsuario(usuario);
+        model.addAttribute("categoriasSeleccionadas", categoriasSeleccionadas); // Añadir las categorías seleccionadas al modelo
 
         return "preferencias"; // Retornar la vista de preferencias
     }
 
     // Mapeo para guardar las preferencias del usuario
     @PostMapping("/preferencias")
-    public String guardarPreferencias(@RequestParam List<Long> categoryIds, HttpSession session) {
-        // Obtener el usuario desde la sesión
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+    public String guardarPreferencias(@RequestParam List<Long> categoryIds) {
+        // Obtener el usuario desde el SessionManager
+        Usuario usuario = sessionManager.getCurrentUser();
 
         if (usuario == null) {
             return "redirect:/login"; // Si no está autenticado, redirige al login
